@@ -13,8 +13,8 @@ extern "C" {
 
 //@{
 /** Indices for component values of the acceleration data signal, used with mbl_mw_datasignal_get_component */
-const uint8_t MBL_MW_ACC_ACCEL_X_AXIS_INDEX = 0, 
-        MBL_MW_ACC_ACCEL_Y_AXIS_INDEX = 1, 
+const uint8_t MBL_MW_ACC_ACCEL_X_AXIS_INDEX = 0,
+        MBL_MW_ACC_ACCEL_Y_AXIS_INDEX = 1,
         MBL_MW_ACC_ACCEL_Z_AXIS_INDEX = 2;
 //@}
 
@@ -50,12 +50,27 @@ METAWEAR_API MblMwDataSignal* mbl_mw_acc_get_packed_acceleration_data_signal(con
 METAWEAR_API float mbl_mw_acc_set_odr(MblMwMetaWearBoard *board, float odr);
 
 /**
+ * Read the output data rate.  Output floating point values rounded to nearest 2nd decimals.
+ * @param board     Board to get configuration
+ * @return Output data rate, in Hz
+ */
+METAWEAR_API float mbl_mw_acc_get_odr(MblMwMetaWearBoard *board);
+
+/**
  * Sets the full scale range.  IF an invalid range is used, the closet valid value will be used.
- * The range is in units of Gs 
+ * The range is in units of Gs
  * @param board     Board to configure
  * @param range     Sampling range, in g's
  */
 METAWEAR_API float mbl_mw_acc_set_range(MblMwMetaWearBoard *board, float range);
+
+/**
+ * Gets the full scale range.
+ * The range is in units of Gs
+ * @param board     Board to configure
+ * @return Sampling range, in g's
+ */
+METAWEAR_API float mbl_mw_acc_get_range(MblMwMetaWearBoard *board);
 
 /**
  * Writes the acceleration settings to the board.

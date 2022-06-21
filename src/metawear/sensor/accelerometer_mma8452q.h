@@ -1,5 +1,5 @@
 /**
- * @copyright MbientLab License 
+ * @copyright MbientLab License
  * @file accelerometer_mma8452q.h
  * @brief Functions for interacting with the MMA8452Q accelerometer.
  * @details This sensor is only available on MetaWear R boards.
@@ -90,8 +90,15 @@ METAWEAR_API MblMwDataSignal* mbl_mw_acc_mma8452q_get_packed_acceleration_data_s
 METAWEAR_API void mbl_mw_acc_mma8452q_set_odr(MblMwMetaWearBoard *board, MblMwAccMma8452qOdr odr);
 
 /**
- * Sets the acceleration range. 
- * The range is in units of Gs 
+ * Read the output data rate for the MMA8452Q accelerometer
+ * Output floating point values rounded to nearest 2nd decimals.
+ * @param board     Board to get configuration
+ */
+METAWEAR_API float mbl_mw_acc_mma8452q_get_odr(MblMwMetaWearBoard *board);
+
+/**
+ * Sets the acceleration range.
+ * The range is in units of Gs
  * @param board     Calling object
  * @param range     Acceleration range value to set
  */
@@ -107,6 +114,13 @@ METAWEAR_API void mbl_mw_acc_mma8452q_set_range(MblMwMetaWearBoard *board, MblMw
 METAWEAR_API void mbl_mw_acc_mma8452q_set_high_pass_cutoff(MblMwMetaWearBoard *board, float frequency);
 
 /**
+ * Gets the acceleration range
+ * The range is in units of Gs
+ * @param board     Calling object
+ */
+METAWEAR_API float mbl_mw_acc_mma8452q_get_range(MblMwMetaWearBoard *board);
+
+/**
  * Writes the acceleration settings to the sensor.
  * Applies the ODR and RANGE values set in set_range() and set_odr().
  * @param board     Calling object
@@ -114,7 +128,7 @@ METAWEAR_API void mbl_mw_acc_mma8452q_set_high_pass_cutoff(MblMwMetaWearBoard *b
 METAWEAR_API void mbl_mw_acc_mma8452q_write_acceleration_config(const MblMwMetaWearBoard *board);
 
 /**
- * Switches the accelerometer to active mode.  
+ * Switches the accelerometer to active mode.
  * When in active mode, the accelerometer cannot be configured
  * @param board     Calling object
  */
@@ -152,7 +166,7 @@ METAWEAR_API MblMwDataSignal* mbl_mw_acc_mma8452q_get_orientation_detection_data
 /**
  * Set the orientation calculation mode.
  * @param board         Calling object
- * @param delay         Time, in milliseconds, for which the sensor's orientation must remain in the new position 
+ * @param delay         Time, in milliseconds, for which the sensor's orientation must remain in the new position
  *                      before a position change is triggered
  */
 METAWEAR_API void mbl_mw_acc_mma8452q_set_orientation_delay(MblMwMetaWearBoard *board, uint16_t delay);

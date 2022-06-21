@@ -1,9 +1,9 @@
 /**
- * @copyright MbientLab License 
+ * @copyright MbientLab License
  * @file accelerometer_bosch.h
  * @brief Interacts with the supported Bosch accelerometers, currently BMI270, BMI160 and BMA255
- * @details The BMI160 and BMA255 sensors are identical except for the output data rates.  Functions that are generic for 
- * both accelerometers have "bosch" in the name whereas functions specific to either accelerometer are contain their model 
+ * @details The BMI160 and BMA255 sensors are identical except for the output data rates.  Functions that are generic for
+ * both accelerometers have "bosch" in the name whereas functions specific to either accelerometer are contain their model
  * i.e. "bmi160" or "bma255".
  */
 #pragma once
@@ -346,6 +346,27 @@ METAWEAR_API void mbl_mw_acc_bmi270_set_odr(MblMwMetaWearBoard *board, MblMwAccB
 METAWEAR_API void mbl_mw_acc_bma255_set_odr(MblMwMetaWearBoard *board, MblMwAccBma255Odr odr);
 
 /**
+ * Read the output data rate for the BMI160 accelerometer
+ * Output floating point values rounded to nearest 2nd decimals.
+ * @param board     Board to get configuration
+ */
+METAWEAR_API float mbl_mw_acc_bmi160_get_odr(MblMwMetaWearBoard *board);
+
+/**
+ * Read the output data rate for the BMI270 accelerometer
+ * Output floating point values rounded to nearest 2nd decimals.
+ * @param board     Board to get configuration
+ */
+METAWEAR_API float mbl_mw_acc_bmi270_get_odr(MblMwMetaWearBoard *board);
+
+/**
+ * Read the output data rate for the BMA255 accelerometer
+ * Output floating point values rounded to nearest 2nd decimals.
+ * @param board     Board to get configuration
+ */
+METAWEAR_API float mbl_mw_acc_bma255_get_odr(MblMwMetaWearBoard *board);
+
+/**
  * Sets the acceleration range
  * The range is in units of Gs between 2 and 16gs for Bosch sensors
  * See MblMwAccBoschRange for allowed values.
@@ -353,6 +374,13 @@ METAWEAR_API void mbl_mw_acc_bma255_set_odr(MblMwMetaWearBoard *board, MblMwAccB
  * @param range     Acceleration range to assign
  */
 METAWEAR_API void mbl_mw_acc_bosch_set_range(MblMwMetaWearBoard *board, MblMwAccBoschRange range);
+
+/**
+ * Gets the acceleration range
+ * The range is in units of Gs
+ * @param board     Calling object
+ */
+METAWEAR_API float mbl_mw_acc_bosch_get_range(MblMwMetaWearBoard *board);
 
 /**
  * Writes the acceleration settings to the sensor
@@ -398,7 +426,7 @@ METAWEAR_API void mbl_mw_acc_bmi160_write_step_counter_config(const MblMwMetaWea
 METAWEAR_API void mbl_mw_acc_bmi160_reset_step_counter(const MblMwMetaWearBoard *board);
 
 /**
- * Enables the BMI160 step detector 
+ * Enables the BMI160 step detector
  * A callback will notify the user when a step is detected but will NOT count steps
  * @param board     Pointer to the board to send the command to
  */
@@ -420,15 +448,15 @@ METAWEAR_API void mbl_mw_acc_bmi160_write_step_counter_config(const MblMwMetaWea
 /**
  * Sets the watermark level of the step counter
  * The Step-counter will trigger output every time this number of steps are counted.
- * Holds implicitly a 20x factor, so the range is 0 to 20460, with resolution of 20 steps. 
- * If 0, the output is disabled. If 1, it will count to 20 steps. 
+ * Holds implicitly a 20x factor, so the range is 0 to 20460, with resolution of 20 steps.
+ * If 0, the output is disabled. If 1, it will count to 20 steps.
  * @param board     Board to modify
  * @param trigger   Number of steps
  */
 METAWEAR_API void mbl_mw_acc_bmi270_set_step_counter_trigger(MblMwMetaWearBoard* board, uint16_t trigger);
 
 /**
- * Enables the BMI270 step counter 
+ * Enables the BMI270 step counter
  * The trigger count will trigger the callback signal with the # of steps
  * @param board     Board to modify
  */
@@ -455,7 +483,7 @@ METAWEAR_API void mbl_mw_acc_bmi270_write_step_counter_config(const MblMwMetaWea
 METAWEAR_API void mbl_mw_acc_bmi270_reset_step_counter(const MblMwMetaWearBoard *board);
 
 /**
- * Reads the current step count.  The callback function will be called with:  
+ * Reads the current step count.  The callback function will be called with:
  * @param board         Calling object
  * @param context       Pointer to additional data for the callback function
  * @param handler       Callback function that is executed when the task is finished
@@ -464,37 +492,37 @@ METAWEAR_API void mbl_mw_acc_bmi270_read_step_counter(MblMwMetaWearBoard* board,
 
 /**
  * Sets the arm side the MetaWear is worn on for gesture recognition
- * Device in left (0 - false) or right (1 - true) arm. 
+ * Device in left (0 - false) or right (1 - true) arm.
  * By default, the wearable device is assumed to be in left arm i.e. default value is 0 - false.
- * @param board     Pointer to the board to send the command to 
+ * @param board     Pointer to the board to send the command to
  * @param side      1 = Right arm, 0 = Left arm
  */
 METAWEAR_API void mbl_mw_acc_bmi270_wrist_gesture_armside(const MblMwMetaWearBoard *board, uint8_t side);
 
 /**
  * Sets the tilt angle for gesture recognition
- * Sine of the minimum tilt angle in portrait down direction of the device when wrist is rolled away (roll-out) from user. 
- * The configuration parameter is scaled by 2048 i.e. 2048 * sin(angle). 
+ * Sine of the minimum tilt angle in portrait down direction of the device when wrist is rolled away (roll-out) from user.
+ * The configuration parameter is scaled by 2048 i.e. 2048 * sin(angle).
  * Range is 1448 to 1774. Default value is 1774.
- * @param board     Pointer to the board to send the command to 
+ * @param board     Pointer to the board to send the command to
  * @param peak      Tilt Angle
  */
 METAWEAR_API void mbl_mw_acc_bmi270_wrist_gesture_peak(const MblMwMetaWearBoard* board, uint16_t peak);
 
 /**
- * Value of minimum time difference between wrist roll-out and roll-in movement during flick gesture. 
+ * Value of minimum time difference between wrist roll-out and roll-in movement during flick gesture.
  * Range is 3 to 5 samples at 50Hz (i.e. 0.06 to 0.1 seconds). Default value is 4 (i.e. 0.08 seconds).
- * @param board     Pointer to the board to send the command to 
- * @param sample      
+ * @param board     Pointer to the board to send the command to
+ * @param sample
  */
 METAWEAR_API void mbl_mw_acc_bmi270_wrist_gesture_samples(const MblMwMetaWearBoard* board, uint16_t samples);
 
 /**
  * Sets the maximum time for the gesture recognition
- * Maximum time within which gesture movement has to be completed. 
+ * Maximum time within which gesture movement has to be completed.
  * Range is 150 to 250 samples at 50Hz (i.e. 3 to 5 seconds). Defualt value is 200 (i.e. 4 seconds).
- * @param board     Pointer to the board to send the command to 
- * @param duration      
+ * @param board     Pointer to the board to send the command to
+ * @param duration
  */
 METAWEAR_API void mbl_mw_acc_bmi270_wrist_gesture_duration(const MblMwMetaWearBoard* board, uint16_t duration);
 
@@ -519,54 +547,54 @@ METAWEAR_API void mbl_mw_acc_bmi270_disable_wrist_gesture(const MblMwMetaWearBoa
 
 /**
  * Sets the minimum angle change for wrist wakeup
- * Cosine of minimum expected attitude change of the device within 1 second time window when moving within focus position. 
+ * Cosine of minimum expected attitude change of the device within 1 second time window when moving within focus position.
  * The parameter is scaled by 2048 i.e. 2048 * cos(angle). Range is 1024 to 1774. Default is 1448.
- * @param board     Pointer to the board to send the command to 
+ * @param board     Pointer to the board to send the command to
  * @param angle     Minimum angle
  */
 METAWEAR_API void mbl_mw_acc_bmi270_wrist_wakeup_angle_focus(const MblMwMetaWearBoard* board, uint16_t angle);
 
 /**
  * Sets the maximum angle change for wrist wakeup
- * Cosine of minimum expected attitude change of the device within 1 second time window when moving from non-focus to focus position. 
+ * Cosine of minimum expected attitude change of the device within 1 second time window when moving from non-focus to focus position.
  * The parameter is scaled by 2048 i.e. 2048 * cos(angle). Range is 1448 to 1856. Default value is 1774.
- * @param board     Pointer to the board to send the command to 
+ * @param board     Pointer to the board to send the command to
  * @param angle     Maximum angle
  */
 METAWEAR_API void mbl_mw_acc_bmi270_wrist_wakeup_angle_nonfocus(const MblMwMetaWearBoard* board, uint16_t angle);
 
 /**
- * Sets the 
- * Sine of the maximum allowed downward tilt angle in landscape right direction of the device, when it is in focus position. 
+ * Sets the
+ * Sine of the maximum allowed downward tilt angle in landscape right direction of the device, when it is in focus position.
  * The configuration parameter is scaled by 2048 i.e. 2048 * sin(angle). Range is 700 to 1024. Default value is 1024.
- * @param board     Pointer to the board to send the command to 
- * @param angle     Maximum tilt angle in Landscape Right mode 
+ * @param board     Pointer to the board to send the command to
+ * @param angle     Maximum tilt angle in Landscape Right mode
  */
 METAWEAR_API void mbl_mw_acc_bmi270_wrist_wakeup_tilt_lr(const MblMwMetaWearBoard* board, uint16_t angle);
 
 /**
- * Sets the 
+ * Sets the
  * Sine of the maximum allowed downward tilt angle in landscape left direction of the device, when it is in focus position.
  * The configuration parameter is scaled by 2048 i.e. 2048 * sin(angle). Range is 700 to 1024. Default value is 700.
- * @param board     Pointer to the board to send the command to 
- * @param angle     Maximum tilt angle in Landscape Left mode 
+ * @param board     Pointer to the board to send the command to
+ * @param angle     Maximum tilt angle in Landscape Left mode
  */
 METAWEAR_API void mbl_mw_acc_bmi270_wrist_wakeup_tilt_ll(const MblMwMetaWearBoard* board, uint16_t angle);
 /**
- * Sets the 
+ * Sets the
  * Sine of the maximum allowed backward tilt angle in portrait down direction of the device, when it is in focus position.
  * The configuration parameter is scaled by 2048 i.e. 2048 * sin(angle). Range is 0 to179. Default value is 179.
- * @param board     Pointer to the board to send the command to 
- * @param angle     Maximum tilt angle in Portrait Down mode 
+ * @param board     Pointer to the board to send the command to
+ * @param angle     Maximum tilt angle in Portrait Down mode
  */
 METAWEAR_API void mbl_mw_acc_bmi270_wrist_wakeup_tilt_pd(const MblMwMetaWearBoard* board, uint16_t angle);
 
 /**
- * Sets the 
- * Sine of the maximum allowed forward tilt angle in portrait up direction of the device, when it is in focus position. 
+ * Sets the
+ * Sine of the maximum allowed forward tilt angle in portrait up direction of the device, when it is in focus position.
  * The configuration parameter is scaled by 2048 i.e. 2048 * sin(angle). Range is 1774 to 1978. Default value is 1925.
- * @param board     Pointer to the board to send the command to 
- * @param angle     Maximum tilt angle in Portrait Up mode 
+ * @param board     Pointer to the board to send the command to
+ * @param angle     Maximum tilt angle in Portrait Up mode
  */
 METAWEAR_API void mbl_mw_acc_bmi270_wrist_wakeup_tilt_pu(const MblMwMetaWearBoard* board, uint16_t angle);
 
@@ -590,7 +618,7 @@ METAWEAR_API void mbl_mw_acc_bmi270_enable_wrist_wakeup(const MblMwMetaWearBoard
 METAWEAR_API void mbl_mw_acc_bmi270_disable_wrist_wakeup(const MblMwMetaWearBoard* board);
 
 /**
- * Enables the BMI270 activity detector 
+ * Enables the BMI270 activity detector
  * A callback will notify the user when an activity is detected (walking, running, still)
  * @param board     Pointer to the board to send the command to
  */
@@ -603,7 +631,7 @@ METAWEAR_API void mbl_mw_acc_bmi270_enable_activity_detection(const MblMwMetaWea
 METAWEAR_API void mbl_mw_acc_bmi270_disable_activity_detection(const MblMwMetaWearBoard *board);
 
 /**
- * Enables the BMI270 step detector 
+ * Enables the BMI270 step detector
  * A callback will notify the user when a step is detected but will NOT count steps
  * @param board     Pointer to the board to send the command to
  */
@@ -641,8 +669,8 @@ METAWEAR_API void mbl_mw_acc_bmi270_acc_offsets(const MblMwMetaWearBoard* board,
  * Remaps the BMI270 axis
  * If the coordinate system of the MetaWear differs from the sensor coordinate system described in the BMI270 datasheet,
  * the sensor axis must be remapped to use the orientation dependent features properly.
- * Axis remapping register allows the host to freely map individual axis to the coordinate system of the used platform. 
- * Individual axis can be mapped to any other defined axis. The sign value of the axis can be also configured. 
+ * Axis remapping register allows the host to freely map individual axis to the coordinate system of the used platform.
+ * Individual axis can be mapped to any other defined axis. The sign value of the axis can be also configured.
  * @param board     Pointer to the board to send the command to
  * @param map       X,Y,Z axis remap
  * @param sign      X,Y,Z axis flip/sign
@@ -652,7 +680,7 @@ METAWEAR_API void mbl_mw_acc_bmi270_axis_remap(const MblMwMetaWearBoard *board, 
 /**
  * Set the hysteresis offset (degrees) for portrait/landscape detection
  * Upside/downside recognition hysteresis is not configurable.
- * See the BMI160 datasheet for more information. 
+ * See the BMI160 datasheet for more information.
  * Not supported by the BMI270.
  * @param board         Calling object
  * @param hysteresis    New calculation mode
@@ -662,7 +690,7 @@ METAWEAR_API void mbl_mw_acc_bosch_set_orientation_hysteresis(MblMwMetaWearBoard
 /**
  * Set the orientation calculation mode
  * Options include: Symmetrical, High asymmetrical, Low asymmetrical
- * See the BMI160 datasheet for more information. 
+ * See the BMI160 datasheet for more information.
  * Not supported by the BMI270.
  * @param board         Calling object
  * @param mode          New calculation mode
@@ -694,7 +722,7 @@ METAWEAR_API void mbl_mw_acc_bosch_disable_orientation_detection(const MblMwMeta
 /**
  * Sets the tap detector's quiet time parameter
  * Selects a tap quiet duration of ‘0’->30 ms, ‘1’->20 ms (i.e how long to wait for another tap)
- * The criteria for a double-tap are fulfilled if the second tap occurs after the time quiet time and within the tap window. 
+ * The criteria for a double-tap are fulfilled if the second tap occurs after the time quiet time and within the tap window.
  * If during the quiet time period (30/20ms) a tap occurs, it will be considered as a new tap.
  * Not supported by the BMI270.
  * @param board     Calling object
@@ -714,7 +742,7 @@ METAWEAR_API void mbl_mw_acc_bosch_set_shock_time(MblMwMetaWearBoard *board, Mbl
 
 /**
  * Sets the tap detector's double tap window
- * The time window between two taps is between 12.5ms and 500ms. 
+ * The time window between two taps is between 12.5ms and 500ms.
  * The criteria for a double-tap are fulfilled if the second tap occurs after the quiet time and within the tap window.
  * Not supported by the BMI270.
  * @param board     Calling object
@@ -804,7 +832,7 @@ METAWEAR_API void mbl_mw_acc_bosch_set_sig_motion_blocksize(MblMwMetaWearBoard *
 /**
  * Writes the motion configuration to the remote device
  * Applies the threshold and count parameter or blocksize depending on motion type and settings from set_*_*()
- * For the BMI270, types include no motion, significant motion, and any motion. 
+ * For the BMI270, types include no motion, significant motion, and any motion.
  * Ignored for other Bosch sensors.
  * @param board     Calling object
  * @param type      Type of motion requested
@@ -814,7 +842,7 @@ METAWEAR_API void mbl_mw_acc_bosch_write_motion_config(const MblMwMetaWearBoard 
 /**
  * Enables motion detection
  * The signal will callback if any motion is sensed based on the motion config
- * For the BMI270, signals include no motion, significant motion, and any motion. 
+ * For the BMI270, signals include no motion, significant motion, and any motion.
  * Ignored for other Bosch sensors.
  * @param board     Calling object
  * @param type      Type of motion requested

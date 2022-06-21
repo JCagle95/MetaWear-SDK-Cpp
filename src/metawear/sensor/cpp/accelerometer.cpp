@@ -53,7 +53,7 @@ void free_accelerometer_module(MblMwMetaWearBoard *board) {
     if (!board->module_info.count(MBL_MW_MODULE_ACCELEROMETER)) {
         return;
     }
-    
+
     switch (board->module_info.at(MBL_MW_MODULE_ACCELEROMETER).implementation) {
     case MBL_MW_MODULE_ACC_TYPE_MMA8452Q:
         free_accelerometer_mma8452q(board);
@@ -174,6 +174,26 @@ float mbl_mw_acc_set_odr(MblMwMetaWearBoard *board, float odr) {
     return INVALID_SETTING;
 }
 
+// Get odr
+float mbl_mw_acc_get_odr(MblMwMetaWearBoard *board) {
+    float odr = 0;
+    switch (board->module_info.at(MBL_MW_MODULE_ACCELEROMETER).implementation) {
+    case MBL_MW_MODULE_ACC_TYPE_MMA8452Q:
+        odr = mbl_mw_acc_mma8452q_get_odr(board);
+        break;
+    case MBL_MW_MODULE_ACC_TYPE_BMI160:
+        odr = mbl_mw_acc_bmi160_get_odr(board);
+        break;
+    case MBL_MW_MODULE_ACC_TYPE_BMA255:
+        odr = mbl_mw_acc_bma255_get_odr(board);
+        break;
+    case MBL_MW_MODULE_ACC_TYPE_BMI270:
+        odr = mbl_mw_acc_bmi270_get_odr(board);
+        break;
+    }
+    return odr;
+}
+
 // Set range
 float mbl_mw_acc_set_range(MblMwMetaWearBoard *board, float range) {
     uint8_t index;
@@ -191,6 +211,20 @@ float mbl_mw_acc_set_range(MblMwMetaWearBoard *board, float range) {
     }
 
     return INVALID_SETTING;
+}
+
+// Get range
+float mbl_mw_acc_get_range(MblMwMetaWearBoard *board) {
+    switch (board->module_info.at(MBL_MW_MODULE_ACCELEROMETER).implementation) {
+    case MBL_MW_MODULE_ACC_TYPE_MMA8452Q:
+        return mbl_mw_acc_mma8452q_get_range(board);
+    case MBL_MW_MODULE_ACC_TYPE_BMI160:
+    case MBL_MW_MODULE_ACC_TYPE_BMA255:
+    case MBL_MW_MODULE_ACC_TYPE_BMI270:
+        return mbl_mw_acc_bosch_get_range(board);
+    }
+
+    return 0;
 }
 
 // Write config
@@ -260,7 +294,7 @@ void mbl_mw_acc_enable_acceleration_sampling(const MblMwMetaWearBoard *board) {
     case MBL_MW_MODULE_ACC_TYPE_BMI270:
         mbl_mw_acc_bosch_enable_acceleration_sampling(board);
         break;
-    }    
+    }
 }
 
 // Disable sampling
