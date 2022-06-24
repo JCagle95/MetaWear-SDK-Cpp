@@ -12,3 +12,5 @@ void free_gyro_module(MblMwMetaWearBoard *board);
 void serialize_gyro_config(const MblMwMetaWearBoard *board, std::vector<uint8_t>& state);
 void deserialize_gyro_config(MblMwMetaWearBoard *board, uint8_t** state_stream);
 void create_gyro_uri(const MblMwDataSignal* signal, std::stringstream& uri);
+
+void mbl_mw_gyro_read_interrupt(const MblMwMetaWearBoard* board, void *context, MblMwFnBoardPtrInt completed);

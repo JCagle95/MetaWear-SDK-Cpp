@@ -1,5 +1,5 @@
 /**
- * @copyright MbientLab License 
+ * @copyright MbientLab License
  * @file gyro_bosch.h
  * @brief Functions for interacting with the BMI160 and BMI270 gyro.
  * @details This sensor is only available on MMR, MMS, MetaWear RG and RPro boards.
@@ -14,8 +14,8 @@ extern "C" {
 
 //@{
 /** Indices for component values of the rotation data signal, used with mbl_mw_datasignal_get_component */
-const uint8_t MBL_MW_GYRO_ROTATION_X_AXIS_INDEX = 0, 
-        MBL_MW_GYRO_ROTATION_Y_AXIS_INDEX = 1, 
+const uint8_t MBL_MW_GYRO_ROTATION_X_AXIS_INDEX = 0,
+        MBL_MW_GYRO_ROTATION_Y_AXIS_INDEX = 1,
         MBL_MW_GYRO_ROTATION_Z_AXIS_INDEX = 2;
 //@}
 
@@ -43,6 +43,87 @@ typedef enum {
     MBL_MW_GYRO_BOSCH_RANGE_250dps,          ///< +/-250 degrees per second
     MBL_MW_GYRO_BOSCH_RANGE_125dps           ///< +/-125 degrees per second
 } MblMwGyroBoschRange;
+
+/**
+ * Generic function to retrieve the data signal representing BMI160 rotation data
+ * This signal is timestamp,x,y,z gyro data
+ * @param board     Pointer to the board to retrieve the signal from
+ * @return Pointer to the board's BMI160 rotation data signal
+ * MblMwCartesianFloat is return signal data type
+ */
+METAWEAR_API MblMwDataSignal* mbl_mw_gyro_get_rotation_data_signal(const MblMwMetaWearBoard *board);
+
+/**
+ * Generic function to get the output data rate for gyroscope
+ * The ODR sets the output data frequency in Hz.
+ * See MblMwGyroBoschOdr for allowed values.
+ * @param board     Pointer to the board to modify
+ */
+METAWEAR_API float mbl_mw_gyro_get_odr(MblMwMetaWearBoard *board);
+
+/**
+ * Generic function to get the data range for gyroscope
+ * The range is in units of degrees per second (dps) for Bosch sensors
+ * See MblMwGyroBoschRange for allowed values.
+ * @param board     Pointer to the board to modify
+ */
+METAWEAR_API float mbl_mw_gyro_get_range(MblMwMetaWearBoard *board);
+
+/**
+ * Generic function to set the output data rate for gyroscope
+ * The ODR sets the output data frequency in Hz.
+ * See MblMwGyroBoschOdr for allowed values.
+ * @param board     Pointer to the board to modify
+ */
+METAWEAR_API void mbl_mw_gyro_set_odr(MblMwMetaWearBoard *board, float odr);
+
+/**
+ * Generic function to set the data range for gyroscope
+ * The range is in units of degrees per second (dps) for Bosch sensors
+ * See MblMwGyroBoschRange for allowed values.
+ * @param board     Pointer to the board to modify
+ */
+METAWEAR_API void mbl_mw_gyro_set_range(MblMwMetaWearBoard *board, float range);
+
+/**
+ * Generic function to write the configuration to the sendor
+ * Applies the ODR and RANGE values set in set_range() and set_odr().
+ * @param board     Pointer to the board to send the command to
+ */
+METAWEAR_API void mbl_mw_gyro_write_config(const MblMwMetaWearBoard *board);
+
+/**
+ * Generic function to switche the gyro to active mode.
+ * While in active mode, the gyro cannot be configured
+ * @param board     Pointer to the board to send the command to
+ */
+METAWEAR_API void mbl_mw_gyro_start(const MblMwMetaWearBoard *board);
+
+/**
+ * Generic function to switche the gyro to standby mode.
+ * @param board     Pointer to the board to send the command to
+ */
+METAWEAR_API void mbl_mw_gyro_stop(const MblMwMetaWearBoard *board);
+
+/**
+ * Get gyroscope power mode (is active or not)
+ * @param board     Pointer to the board to send the command to
+ */
+METAWEAR_API uint8_t mbl_mw_gyro_is_active(const MblMwMetaWearBoard *board);
+
+/**
+ * Generic function to enable rotation sampling
+ * The board will start gathering data from the gyroscope
+ * @param board     Pointer to the board to send the command to
+ */
+METAWEAR_API void mbl_mw_gyro_enable_rotation_sampling(const MblMwMetaWearBoard *board);
+
+/**
+ * Generic function to disable rotation sampling
+ * The board will stop gathering data from the gyroscope
+ * @param board     Pointer to the board to send the command to
+ */
+METAWEAR_API void mbl_mw_gyro_disable_rotation_sampling(const MblMwMetaWearBoard *board);
 
 /**
  * Retrieves the data signal representing BMI160 rotation data
@@ -104,6 +185,22 @@ METAWEAR_API void mbl_mw_gyro_bmi160_set_odr(MblMwMetaWearBoard *board, MblMwGyr
 METAWEAR_API void mbl_mw_gyro_bmi160_set_range(MblMwMetaWearBoard *board, MblMwGyroBoschRange range);
 
 /**
+ * Gets the output data rate for the BMI160 gyroscope
+ * The ODR sets the output data frequency in Hz.
+ * See MblMwGyroBoschOdr for allowed values.
+ * @param board     Pointer to the board to modify
+ */
+METAWEAR_API float mbl_mw_gyro_bmi160_get_odr(MblMwMetaWearBoard *board);
+
+/**
+ * Gets the rotation range
+ * The range is in units of degrees per second (dps) for Bosch sensors
+ * See MblMwGyroBoschRange for allowed values.
+ * @param board     Pointer to the board to modify
+ */
+METAWEAR_API float mbl_mw_gyro_bmi160_get_range(MblMwMetaWearBoard *board);
+
+/**
  * Writes the configuration to the sendor
  * Applies the ODR and RANGE values set in set_range() and set_odr().
  * @param board     Pointer to the board to send the command to
@@ -139,6 +236,22 @@ METAWEAR_API void mbl_mw_gyro_bmi270_set_odr(MblMwMetaWearBoard *board, MblMwGyr
 METAWEAR_API void mbl_mw_gyro_bmi270_set_range(MblMwMetaWearBoard *board, MblMwGyroBoschRange range);
 
 /**
+ * Gets the output data rate for the BMI160 gyroscope
+ * The ODR sets the output data frequency in Hz.
+ * See MblMwGyroBoschOdr for allowed values.
+ * @param board     Pointer to the board to modify
+ */
+METAWEAR_API float mbl_mw_gyro_bmi270_get_odr(MblMwMetaWearBoard *board);
+
+/**
+ * Gets the rotation range
+ * The range is in units of degrees per second (dps) for Bosch sensors
+ * See MblMwGyroBoschRange for allowed values.
+ * @param board     Pointer to the board to modify
+ */
+METAWEAR_API float mbl_mw_gyro_bmi270_get_range(MblMwMetaWearBoard *board);
+
+/**
  * Writes the configuration to the sendor
  * Applies the ODR and RANGE values set in set_range() and set_odr().
  * @param board     Pointer to the board to send the command to
@@ -156,7 +269,7 @@ METAWEAR_API void mbl_mw_gyro_bmi270_write_config(const MblMwMetaWearBoard *boar
 METAWEAR_API void mbl_mw_gyro_bmi270_read_config(const MblMwMetaWearBoard* board, void *context, MblMwFnBoardPtrInt completed);
 
 /**
- * Switches the gyro to active mode.  
+ * Switches the gyro to active mode.
  * While in active mode, the gyro cannot be configured
  * @param board     Pointer to the board to send the command to
  */
@@ -169,7 +282,7 @@ METAWEAR_API void mbl_mw_gyro_bmi160_start(const MblMwMetaWearBoard *board);
 METAWEAR_API void mbl_mw_gyro_bmi160_stop(const MblMwMetaWearBoard *board);
 
 /**
- * Switches the gyro to active mode.  
+ * Switches the gyro to active mode.
  * While in active mode, the gyro cannot be configured
  * @param board     Pointer to the board to send the command to
  */
@@ -211,11 +324,11 @@ METAWEAR_API void mbl_mw_gyro_bmi270_disable_rotation_sampling(const MblMwMetaWe
 
 /**
  * Manual compensation for the BMI270 gyro
- * The offset compensation field for each axis has a width of 10 bit using two’s complement notation. 
+ * The offset compensation field for each axis has a width of 10 bit using two’s complement notation.
  * The offset resolution (LSB) is 61 mdps and the offset range is +- 31 dps.
  * @param board     Pointer to the board to send the command to
- * @param x_offset  Offset compensation for Gyroscope X-axis 
- * @param y_offset  Offset compensation for Gyroscope Y-axis 
+ * @param x_offset  Offset compensation for Gyroscope X-axis
+ * @param y_offset  Offset compensation for Gyroscope Y-axis
  * @param z_offset  Offset compensation for Gyroscope Z-axis
  */
 METAWEAR_API void mbl_mw_gyro_bmi270_offsets(const MblMwMetaWearBoard* board, uint8_t x_offset, uint8_t y_offset, uint8_t z_offset);

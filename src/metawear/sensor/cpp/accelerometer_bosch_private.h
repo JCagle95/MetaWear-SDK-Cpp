@@ -21,6 +21,7 @@ void deserialize_accelerometer_bmi160_config(MblMwMetaWearBoard* board, uint8_t*
 void deserialize_accelerometer_bma255_config(MblMwMetaWearBoard* board, uint8_t** state_stream);
 void deserialize_accelerometer_bmi270_config(MblMwMetaWearBoard* board, uint8_t** state_stream);
 
+void mbl_mw_acc_read_interrupt(const MblMwMetaWearBoard *board, void *context, MblMwFnBoardPtrInt completed);
 void read_accelerometer_bosch_acceleration_config(const MblMwMetaWearBoard* board, void *context, MblMwFnBoardPtrInt completed);
 void create_acc_bosch_uri(const MblMwDataSignal* signal, std::stringstream& uri);
 void create_acc_bmi270_uri(const MblMwDataSignal* signal, std::stringstream& uri);

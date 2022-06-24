@@ -1,5 +1,5 @@
 /**
- * @copyright MbientLab License 
+ * @copyright MbientLab License
  * @file ambientlight_ltr329.h
  * @brief Functions for interacting with the LTR329 ambient light sensor.
  * @details This sensor is only available on MetaWear RPro boards.
@@ -55,7 +55,7 @@ typedef enum {
  * This signal represents the luminance in lux
  * @param board     Pointer to the board to retrieve the signal from
  * @return Pointer to the board's LTR329 illuminance data signal
- * UINT32 is return signal data type 
+ * UINT32 is return signal data type
  */
 METAWEAR_API MblMwDataSignal* mbl_mw_als_ltr329_get_illuminance_data_signal(const MblMwMetaWearBoard *board);
 
@@ -67,6 +67,24 @@ METAWEAR_API MblMwDataSignal* mbl_mw_als_ltr329_get_illuminance_data_signal(cons
  * @param gain      Sensor gain value to set
  */
 METAWEAR_API void mbl_mw_als_ltr329_set_gain(MblMwMetaWearBoard *board, MblMwAlsLtr329Gain gain);
+
+/**
+ * Sets the sensor gain.
+ * There are altogether six gain settings (1X, 2X, 4X, 8X, 48X and 96X) available for user to configure
+ * See MblMwAlsLtr329Gain for allowed values
+ * @param board     Pointer to the board to modify
+ * @param gain      Sensor gain value to set
+ */
+METAWEAR_API void mbl_mw_als_ltr329_set_gain_approximate(MblMwMetaWearBoard *board, int gain);
+
+/**
+ * Sets the sensor gain.
+ * There are altogether six gain settings (1X, 2X, 4X, 8X, 48X and 96X) available for user to configure
+ * See MblMwAlsLtr329Gain for allowed values
+ * @param board     Pointer to the board to modify
+ * @param gain      Sensor gain value to set
+ */
+METAWEAR_API int mbl_mw_als_ltr329_get_gain(MblMwMetaWearBoard *board);
 
 /**
  * Sets the sensor integration time.
@@ -87,11 +105,34 @@ METAWEAR_API void mbl_mw_als_ltr329_set_integration_time(MblMwMetaWearBoard *boa
 METAWEAR_API void mbl_mw_als_ltr329_set_measurement_rate(MblMwMetaWearBoard *board, MblMwAlsLtr329MeasurementRate measurement_rate);
 
 /**
+ * Sets the sensor measurement rate.
+ * Frequency of light measurement - 50ms (default) to 2000 ms
+ * See MblMwAlsLtr329MeasurementRate for allowed values
+ * @param board     Pointer to the board to modify
+ * @param measurement_rate      Measurement rate value to set
+ */
+METAWEAR_API void mbl_mw_als_ltr329_set_measurement_rate_approximate(MblMwMetaWearBoard *board, float measurement_rate);
+
+/**
+ * Gets the sensor measurement rate.
+ * Frequency of light measurement - 50ms (default) to 2000 ms
+ * See MblMwAlsLtr329MeasurementRate for allowed values
+ * @param board     Pointer to the board to modify
+ */
+METAWEAR_API float mbl_mw_als_ltr329_get_measurement_rate(MblMwMetaWearBoard *board);
+
+/**
  * Writes the configuration to the LTR329 sensor.
  * Applies the INTEGRATION TIME, MEASUREMENT RATE, and GAIN values set in set_*().
  * @param board     Pointer to the board to send the command to
  */
 METAWEAR_API void mbl_mw_als_ltr329_write_config(const MblMwMetaWearBoard *board);
+
+/**
+ * Get light sensor power mode (is active or not)
+ * @param board     Pointer to the board to send the command to
+ */
+METAWEAR_API uint8_t mbl_mw_als_ltr329_is_active(const MblMwMetaWearBoard *board);
 
 /**
  * Starts illuminance sampling.

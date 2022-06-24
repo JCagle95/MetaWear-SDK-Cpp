@@ -319,6 +319,13 @@ METAWEAR_API MblMwDataSignal* mbl_mw_acc_bosch_get_motion_data_signal(const MblM
 METAWEAR_API MblMwDataSignal* mbl_mw_acc_bosch_get_tap_data_signal(const MblMwMetaWearBoard* board);
 
 /**
+ * Gets the power state of BMI270
+ * The ODR sets the output data frequency in Hz.
+ * @param board     Pointer to the board to modify
+ */
+METAWEAR_API void mbl_mw_acc_bmi270_get_power(const MblMwMetaWearBoard* board, void *context, MblMwFnBoardPtrInt completed);
+
+/**
  * Sets the output data rate for the BMI160 accelerometer
  * The ODR sets the output data frequency in Hz.
  * See MblMwAccBmi160Odr for allowed values.
@@ -855,6 +862,12 @@ METAWEAR_API void mbl_mw_acc_bosch_enable_motion_detection(const MblMwMetaWearBo
  * @param type      Type of motion requested
  */
 METAWEAR_API void mbl_mw_acc_bosch_disable_motion_detection(const MblMwMetaWearBoard *board, MblMwAccBoschMotion type);
+
+/**
+ * Get accelerometer data interrupt (is active or not)
+ * @param board     Pointer to the board to send the command to
+ */
+METAWEAR_API uint8_t mbl_mw_acc_bosch_is_active(const MblMwMetaWearBoard *board);
 
 /**
  * Switches the accelerometer to active mode

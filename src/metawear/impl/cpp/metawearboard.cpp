@@ -40,6 +40,7 @@
 #include "metawear/sensor/sensor_fusion.h"
 
 #include "metawear/sensor/cpp/accelerometer_private.h"
+#include "metawear/sensor/cpp/accelerometer_bosch_private.h"
 #include "metawear/sensor/cpp/ambientlight_ltr329_private.h"
 #include "metawear/sensor/cpp/barometer_bosch_private.h"
 #include "metawear/sensor/cpp/colordetector_tcs34725_private.h"
@@ -121,7 +122,7 @@ static int32_t forward_response(const ResponseHeader& header, MblMwMetaWearBoard
     auto signal = dynamic_cast<MblMwDataSignal*>(it->second);
     bool handled= false;
     int64_t epoch = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
-    
+
     MblMwDataProcessor* processor = dynamic_cast<MblMwDataProcessor*>(signal);
     const uint8_t* start = response;
     uint32_t extra;
@@ -142,11 +143,11 @@ static int32_t forward_response(const ResponseHeader& header, MblMwMetaWearBoard
                 }
                 break;
             }
-            case DataProcessorType::PACKER: {                    
+            case DataProcessorType::PACKER: {
                 auto parent = find_processor(processor, DataProcessorType::ACCOUNTER);
-                uint8_t i = 0, count = get_packer_count(processor), 
+                uint8_t i = 0, count = get_packer_count(processor),
                         pack_size = get_packer_length(processor) - (parent == nullptr ? 0 : get_accounter_length(parent));
-                
+
                 do {
                     int64_t real_epoch = parent == nullptr ? epoch : extract_accounter_epoch(parent, epoch, &start, len, &extra);
                     handled|= invoke_signal_handler(signal, real_epoch, start, pack_size, &extra);
@@ -255,17 +256,17 @@ const unordered_map<uint8_t, void(*)(MblMwMetaWearBoard*, uint8_t**)> CONFIG_DES
 
 const MblMwGattChar METAWEAR_SERVICE_NOTIFY_CHAR = { 0x326a900085cb9195, 0xd9dd464cfbbae75a, 0x326a900685cb9195, 0xd9dd464cfbbae75a };
 
-const uint64_t DEVICE_INFO_SERVICE_UUID_HIGH = 0x0000180a00001000, 
+const uint64_t DEVICE_INFO_SERVICE_UUID_HIGH = 0x0000180a00001000,
         DEVICE_INFO_SERVICE_UUID_LOW = 0x800000805f9b34fb;
 
-const MblMwGattChar METAWEAR_COMMAND_CHAR = { METAWEAR_SERVICE_NOTIFY_CHAR.service_uuid_high, METAWEAR_SERVICE_NOTIFY_CHAR.service_uuid_low, 
+const MblMwGattChar METAWEAR_COMMAND_CHAR = { METAWEAR_SERVICE_NOTIFY_CHAR.service_uuid_high, METAWEAR_SERVICE_NOTIFY_CHAR.service_uuid_low,
         0x326a900185cb9195, 0xd9dd464cfbbae75a };
 const MblMwGattChar DEV_INFO_FIRMWARE_CHAR = { DEVICE_INFO_SERVICE_UUID_HIGH, DEVICE_INFO_SERVICE_UUID_LOW, 0x00002a2600001000, 0x800000805f9b34fb },
         DEV_INFO_MODEL_CHAR = { DEVICE_INFO_SERVICE_UUID_HIGH, DEVICE_INFO_SERVICE_UUID_LOW, 0x00002a2400001000, 0x800000805f9b34fb },
         DEV_INFO_HW_CHAR = { DEVICE_INFO_SERVICE_UUID_HIGH, DEVICE_INFO_SERVICE_UUID_LOW, 0x00002a2700001000, 0x800000805f9b34fb },
         DEV_INFO_MFT_CHAR = { DEVICE_INFO_SERVICE_UUID_HIGH, DEVICE_INFO_SERVICE_UUID_LOW, 0x00002a2900001000, 0x800000805f9b34fb },
         DEV_INFO_SERIAL_CHAR = { DEVICE_INFO_SERVICE_UUID_HIGH, DEVICE_INFO_SERVICE_UUID_LOW, 0x00002a2500001000, 0x800000805f9b34fb };
- 
+
 const vector<tuple<MblMwGattChar, void(*)(MblMwMetaWearBoard*, const uint8_t*, uint8_t), bool(*)(MblMwMetaWearBoard*)>> BOARD_DEV_INFO_CHARS = {
     make_tuple(DEV_INFO_FIRMWARE_CHAR, [](MblMwMetaWearBoard* board, const uint8_t* value, uint8_t length) {
         Version current(string(value, value + length));
@@ -298,13 +299,13 @@ const vector<tuple<MblMwGattChar, void(*)(MblMwMetaWearBoard*, const uint8_t*, u
             board->module_info.clear();
         }
     }, [](MblMwMetaWearBoard* board) { return false; }),
-    make_tuple(DEV_INFO_MODEL_CHAR, [](MblMwMetaWearBoard* board, const uint8_t* value, uint8_t length) { board->module_number.assign(value, value + length); }, 
+    make_tuple(DEV_INFO_MODEL_CHAR, [](MblMwMetaWearBoard* board, const uint8_t* value, uint8_t length) { board->module_number.assign(value, value + length); },
             [](MblMwMetaWearBoard* board) { return !board->module_number.empty(); }
     ),
-    make_tuple(DEV_INFO_HW_CHAR, [](MblMwMetaWearBoard* board, const uint8_t* value, uint8_t length) { board->hardware_revision.assign(value, value + length); }, 
+    make_tuple(DEV_INFO_HW_CHAR, [](MblMwMetaWearBoard* board, const uint8_t* value, uint8_t length) { board->hardware_revision.assign(value, value + length); },
             [](MblMwMetaWearBoard* board) { return !board->hardware_revision.empty(); }
     ),
-    make_tuple(DEV_INFO_MFT_CHAR, [](MblMwMetaWearBoard* board, const uint8_t* value, uint8_t length) { board->manufacturer.assign(value, value + length); }, 
+    make_tuple(DEV_INFO_MFT_CHAR, [](MblMwMetaWearBoard* board, const uint8_t* value, uint8_t length) { board->manufacturer.assign(value, value + length); },
             [](MblMwMetaWearBoard* board) { return !board->manufacturer.empty(); }
     ),
     make_tuple(DEV_INFO_SERIAL_CHAR, [](MblMwMetaWearBoard* board, const uint8_t* value, uint8_t length) { board->serial_number.assign(value, value + length); },
@@ -312,9 +313,9 @@ const vector<tuple<MblMwGattChar, void(*)(MblMwMetaWearBoard*, const uint8_t*, u
     )
 };
 
-MblMwMetaWearBoard::MblMwMetaWearBoard() : logger_state(nullptr, [](void *ptr) -> void { tear_down_logging(ptr, false); }), 
+MblMwMetaWearBoard::MblMwMetaWearBoard() : logger_state(nullptr, [](void *ptr) -> void { tear_down_logging(ptr, false); }),
         timer_state(nullptr, [](void *ptr) -> void { free_timer_module(ptr); }),
-        event_state(nullptr, [](void *ptr) -> void { free_event_module(ptr); }), 
+        event_state(nullptr, [](void *ptr) -> void { free_event_module(ptr); }),
         dp_state(nullptr, [](void *ptr) -> void { free_dataprocessor_module(ptr); }),
         macro_state(nullptr, [](void *ptr) -> void { free_macro_module(ptr); }),
         debug_state(nullptr, [](void *ptr) -> void { free_debug_module(ptr); }),
@@ -405,7 +406,7 @@ static inline void service_discovery_completed(MblMwMetaWearBoard* board) {
             }
 
             mbl_mw_datasignal_unsubscribe(mbl_mw_logging_get_time_data_signal(board));
-            
+
             MblMwLoggingTime *time = static_cast<MblMwLoggingTime*>(data->value);
             mbl_mw_logging_set_reference_time(board, time->reset_uid, time->epoch);
             mbl_mw_logging_set_latest_reset_uid(board, time->reset_uid);
@@ -425,7 +426,7 @@ static inline void service_discovery_completed(MblMwMetaWearBoard* board) {
 static inline void queue_next_query(MblMwMetaWearBoard *board) {
     do {
         board->module_discovery_index++;
-    } while (board->module_discovery_index < (int8_t) MODULE_DISCOVERY_CMDS.size() && 
+    } while (board->module_discovery_index < (int8_t) MODULE_DISCOVERY_CMDS.size() &&
             board->module_info.count(MODULE_DISCOVERY_CMDS[board->module_discovery_index][0]));
 
     if (board->module_discovery_index >= (int8_t) MODULE_DISCOVERY_CMDS.size()) {
@@ -459,7 +460,7 @@ static int32_t read_gatt_char_handler(const void* caller, const uint8_t* value, 
 static void queue_next_read(MblMwMetaWearBoard* board) {
     do {
         board->dev_info_index++;
-    } while (board->dev_info_index < (int8_t) BOARD_DEV_INFO_CHARS.size() && 
+    } while (board->dev_info_index < (int8_t) BOARD_DEV_INFO_CHARS.size() &&
             get<2>(BOARD_DEV_INFO_CHARS[board->dev_info_index])(board));
 
     if (board->dev_info_index >= (int8_t) BOARD_DEV_INFO_CHARS.size()) {
@@ -563,7 +564,7 @@ void send_command(const MblMwMetaWearBoard* board, const uint8_t* command, uint8
     if (!record_command(board, command, len)) {
         board->btle_conn.write_gatt_char(
             board->btle_conn.context,
-            board, 
+            board,
             command[0] == MBL_MW_MODULE_MACRO ? MBL_MW_GATT_CHAR_WRITE_WITH_RESPONSE : MBL_MW_GATT_CHAR_WRITE_WITHOUT_RESPONSE,
             &METAWEAR_COMMAND_CHAR, command, len
         );
@@ -592,7 +593,7 @@ MblMwModel mbl_mw_metawearboard_get_model(const MblMwMetaWearBoard* board) {
         return MBL_MW_MODEL_METAWEAR_R;
     }
     if (board->module_number == "1") {
-        if (mbl_mw_metawearboard_lookup_module(board, MBL_MW_MODULE_BAROMETER) != MBL_MW_MODULE_TYPE_NA && 
+        if (mbl_mw_metawearboard_lookup_module(board, MBL_MW_MODULE_BAROMETER) != MBL_MW_MODULE_TYPE_NA &&
                 mbl_mw_metawearboard_lookup_module(board, MBL_MW_MODULE_AMBIENT_LIGHT) != MBL_MW_MODULE_TYPE_NA) {
             return MBL_MW_MODEL_METAWEAR_RPRO;
         }
@@ -698,7 +699,7 @@ uint8_t* mbl_mw_metawearboard_serialize(const MblMwMetaWearBoard* board, uint32_
     vector<uint8_t> serialized_state;
 
     serialized_state.push_back(ORDINAL(SerializationFormat::TIME_REFERENCE));
-    
+
     board->firmware_revision.serialize(serialized_state);
 
     serialized_state.push_back((uint8_t)board->module_number.size());
@@ -759,9 +760,9 @@ uint8_t* mbl_mw_metawearboard_serialize(const MblMwMetaWearBoard* board, uint32_
             }
         }
     }
-    
+
     serialize_logging(board, serialized_state);
-    
+
     *size = (uint32_t) serialized_state.size();
     uint8_t* state_bytes = (uint8_t*)malloc(sizeof(uint8_t) * (*size));
     memcpy(state_bytes, serialized_state.data(), *size);
@@ -789,7 +790,7 @@ int32_t mbl_mw_metawearboard_deserialize(MblMwMetaWearBoard* board, uint8_t* sta
     for (uint8_t i = 0; i < module_info_size; i++) {
         board->module_info.emplace(*current_addr, &current_addr);
     }
-    
+
     for (auto it : board->module_events) {
         delete it.second;
     }
@@ -856,7 +857,7 @@ int32_t mbl_mw_metawearboard_deserialize(MblMwMetaWearBoard* board, uint8_t* sta
             board->module_events.emplace(live_header, saved_event);
         }
     }
-    
+
     uint8_t module_config_size= *current_addr;
     current_addr++;
     for (uint8_t i= 0; i < module_config_size; i++) {
@@ -910,8 +911,8 @@ static void read_sensor_fusion_config_completed(void *context, MblMwMetaWearBoar
     query_active_loggers(board);
 }
 
-// Helper function - read gyro
-static void read_gyro_config_completed(void *context, MblMwMetaWearBoard* board, int32_t value) {
+// Helper function - read sensor fusion
+static void read_ambient_light_config_completed(void *context, MblMwMetaWearBoard* board, int32_t value) {
     if (mbl_mw_metawearboard_lookup_module(board, MBL_MW_MODULE_SENSOR_FUSION) != MBL_MW_MODULE_TYPE_NA) {
         mbl_mw_sensor_fusion_read_config(board, context, read_sensor_fusion_config_completed);
     } else {
@@ -919,7 +920,16 @@ static void read_gyro_config_completed(void *context, MblMwMetaWearBoard* board,
     }
 }
 
-// Helper function - read acc
+// Helper function - read light sensor
+static void read_gyro_config_completed(void *context, MblMwMetaWearBoard* board, int32_t value) {
+    if (mbl_mw_metawearboard_lookup_module(board, MBL_MW_MODULE_AMBIENT_LIGHT) != MBL_MW_MODULE_TYPE_NA) {
+        mbl_mw_als_ltr329_read_config(board, context, read_ambient_light_config_completed);
+    } else {
+        read_ambient_light_config_completed(context, board, MBL_MW_STATUS_OK);
+    }
+}
+
+// Helper function - read gyro
 static void read_acc_config_completed(void *context, MblMwMetaWearBoard* board, int32_t value) {
     if (mbl_mw_metawearboard_lookup_module(board, MBL_MW_MODULE_GYRO) != MBL_MW_MODULE_TYPE_NA) {
         mbl_mw_gyro_bmi160_read_config(board, context, read_gyro_config_completed);

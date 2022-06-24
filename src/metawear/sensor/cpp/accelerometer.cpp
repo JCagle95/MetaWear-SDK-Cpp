@@ -255,6 +255,20 @@ void mbl_mw_acc_read_config(const MblMwMetaWearBoard* board, void *context, MblM
     }
 }
 
+// Read power interrupt
+uint8_t mbl_mw_acc_is_active(const MblMwMetaWearBoard* board) {
+    switch (board->module_info.at(MBL_MW_MODULE_ACCELEROMETER).implementation) {
+    case MBL_MW_MODULE_ACC_TYPE_MMA8452Q:
+        return 0;
+    case MBL_MW_MODULE_ACC_TYPE_BMI160:
+    case MBL_MW_MODULE_ACC_TYPE_BMA255:
+    case MBL_MW_MODULE_ACC_TYPE_BMI270:
+        return mbl_mw_acc_bosch_is_active(board);
+    default:
+        return 0;
+    }
+}
+
 // Start acc
 void mbl_mw_acc_start(const MblMwMetaWearBoard *board) {
     switch (board->module_info.at(MBL_MW_MODULE_ACCELEROMETER).implementation) {

@@ -90,6 +90,12 @@ METAWEAR_API void mbl_mw_acc_write_acceleration_config(const MblMwMetaWearBoard*
 METAWEAR_API void mbl_mw_acc_read_config(const MblMwMetaWearBoard* board, void *context, MblMwFnBoardPtrInt completed);
 
 /**
+ * Get accelerometer power mode (is active or not)
+ * @param board     Pointer to the board to send the command to
+ */
+METAWEAR_API uint8_t mbl_mw_acc_is_active(const MblMwMetaWearBoard *board);
+
+/**
  * Switches the accelerometer to active mode.
  * @param board     Board the accelerometer is on
  */
